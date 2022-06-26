@@ -19,7 +19,6 @@ m2 = 0
 m3 = 0
 x = 0
 timers_starttime = 0
-mtimer = 0
 dont_print = False
 
 # Displayed texts
