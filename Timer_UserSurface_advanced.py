@@ -30,12 +30,19 @@ def start_clicked():
     # ground timer value
     ground_timer_value = ttk.Label(counting, text = time.strftime("%H:%M:%S", time.gmtime(timer_time)))
     ground_timer_value.pack(fill='x', expand=True)
-    ground_timer_value.after(1000, time)
+    # ground_timer_value.after(1000, time)
 
     # refresh clicked
     def refresh_clicked():
-        timer_time = time.time() - timer_starttime
-        ground_timer_value["text"] = time.strftime("%H:%M:%S", time.gmtime(timer_time))
+        if timer_paused == False:
+            timer_time = time.time() - timer_starttime
+            ground_timer_value["text"] = time.strftime("%H:%M:%S", time.gmtime(timer_time))
+        else:
+            msg = f'Your timer is paused!'
+            showinfo(
+                title='Information',
+                message=msg
+            )
 
     # end clicked
     def end_clicked():
@@ -47,20 +54,28 @@ def start_clicked():
 
     # pause clicked
     def pause_clicked():
+        global timer_paused
+        global timer_starttime
+        global timer_time
+        global timer_pausetime
         if timer_paused == False:
-            timer_time = time.time() - timer_starttime
+            refresh_clicked()
+            timer_pausetime = time.time()
             timer_paused = True
+            ground_timer_label["text"] = ground_timer.get() + ': PAUSED'
+            ground_timer_value["text"] = time.strftime("%H:%M:%S", time.gmtime(timer_time))
         else:
-            timer_starttime = time.time() - timer_time
+            timer_starttime = timer_starttime + time.time() - timer_pausetime
             timer_paused = False
-
+            ground_timer_label["text"] = ground_timer.get() + ':'
+            ground_timer_value["text"] = time.strftime("%H:%M:%S", time.gmtime(timer_time))
 
     # refresh button
     refresh_button = ttk.Button(counting, text="Refresh", command=refresh_clicked)
     refresh_button.pack(fill='x', expand=True, pady=10)
 
     # pause button
-    pause_button = ttk.Button(counting, text="Pause", command=pause_clicked)
+    pause_button = ttk.Button(counting, text="pause/continue", command=pause_clicked)
     pause_button.pack(fill='x', expand=True, pady=10)
 
     # add button
