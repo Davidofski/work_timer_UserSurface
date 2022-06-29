@@ -1,11 +1,15 @@
+# import
 from pickle import TRUE
 import tkinter as tk
 from tkinter import ttk
+import tkinter
 from tkinter.messagebox import showinfo
 import time, _thread
 
 # Definition of variables
 timers = {}
+empty_labels = ['lb1', 'lb2', 'lb3', 'lb4', 'lb5', 'lb6', 'lb7', 'lb8', 'lb9']
+lbcount = 0
 timers_totaltime = 0
 timers_starttime = 0
 active_timer = 0
@@ -19,10 +23,7 @@ m2 = 0
 m3 = 0
 x = 0
 timers_starttime = 0
-dont_print = False
-
-# Displayed texts
-separator = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+now = time.time()
 
 # Definition of time thread
 def display_timers():
@@ -43,49 +44,69 @@ def display_timers():
 
 # root window
 root = tk.Tk()
-root.geometry("300x150")
-root.resizable(False, False)
-root.title('Sign In')
+root.geometry("300x300")
+root.resizable(True, True)
+root.title('Work Timer')
 
 # store email address and password
-email = tk.StringVar()
+ground_timer = tk.StringVar()
 password = tk.StringVar()
 
+# open timer window when 'start' has been clicked
+def start_clicked():
+    timers_starttime = time.time()
 
-def login_clicked():
-    """ callback when the login button clicked
-    """
-    msg = f'You entered email: {email.get()} and password: {password.get()}'
-    showinfo(
-        title='Information',
-        message=msg
-    )
+# add timer when 'add' has been clicked
+def add_clicked(lbcount):
+    if lbcount < 10:
+        new_label = empty_labels[lbcount]
+        lbcount = lbcount + 1
+    else:
+        msg = f'You reached the max amount of timer!'
+        showinfo(
+            title='Information',
+            message=msg
+        )
+
+# get time during runnign program @refresh
+def get_time():
+    now = time.time()
+    timers[1] = now - timers_starttime
+    ground_timer_label["text"] = "Timer 1: " + time.strftime("%H:%M:%S", time.gmtime(timers[1]))
+
+# Sign in frame
+signin = ttk.Frame(root)
+signin.pack(padx=10, pady=10, fill='x', expand=True)
+
+
+# ground timer
+ground_timer_label = ttk.Label(signin, text="Timer 1: " + time.strftime("%H:%M:%S", time.gmtime(now)))
+ground_timer_label.pack(fill='x', expand=True)
+
+ground_timer_entry = ttk.Entry(signin, textvariable=ground_timer)
+ground_timer_entry.pack(fill='x', expand=True)
+ground_timer_entry.focus()
+
+# start button
+start_button = ttk.Button(signin, text="Start", command=start_clicked)
+start_button.pack(fill='x', expand=True, pady=10)
+
+# add button
+add_button = ttk.Button(signin, text="Add timer", command=add_clicked)
+add_button.pack(fill='x', expand=True, pady=10)
+
+# refresh button
+refresh_button = ttk.Button(signin, text="Refresh", command=get_time)
+refresh_button.pack(fill='x', expand=True, pady=10)
+
+root.mainloop()
 
 
 
 
 #   Start of program
 
-# Header
-print("Timer with 4 threads which can be defined")
-print("Please define your timers\n")
-
 # Definition of timers
-## Name 'e' can't be given
-print("How many timers would you like to use?")
-
-i = 0
-while i == 0:                                                   #Enterign the amount of timers wished
-    try:
-        m0 = input()
-        timers_number = int(m0)
-        i = 1
-        break
-    except:
-        print("Please enter a number!")
-
-if timers_number < 1:
-    timers_number = 1
 
 while i < timers_number + 1:                        #Filling the amount of timeres into the library
     timers[i] = 0
@@ -134,31 +155,3 @@ display_timers()
 
 
 
-
-
-# Sign in frame
-signin = ttk.Frame(root)
-signin.pack(padx=10, pady=10, fill='x', expand=True)
-
-
-# email
-email_label = ttk.Label(signin, text="Email Address:")
-email_label.pack(fill='x', expand=True)
-
-email_entry = ttk.Entry(signin, textvariable=email)
-email_entry.pack(fill='x', expand=True)
-email_entry.focus()
-
-# password
-password_label = ttk.Label(signin, text="Password:")
-password_label.pack(fill='x', expand=True)
-
-password_entry = ttk.Entry(signin, textvariable=password, show="*")
-password_entry.pack(fill='x', expand=True)
-
-# login button
-login_button = ttk.Button(signin, text="Login", command=login_clicked)
-login_button.pack(fill='x', expand=True, pady=10)
-
-
-root.mainloop()
